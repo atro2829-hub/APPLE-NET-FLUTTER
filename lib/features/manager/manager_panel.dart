@@ -2241,7 +2241,10 @@ class _SaleLocationsTabState extends ConsumerState<_SaleLocationsTab> {
                             Switch(
                               value: location.isActive,
                               onChanged: (_) => _toggleActive(location),
-                              activeThumbColor: AppTheme.accentGreen,
+                              thumbColor: WidgetStateProperty.resolveWith((states) {
+                                if (states.contains(WidgetState.selected)) return AppTheme.accentGreen;
+                                return null;
+                              }),
                             ),
                           ],
                         ),

@@ -779,13 +779,11 @@ final bulkNotificationsProvider =
 // Theme Notifier — Notifier<ThemeMode>
 // ============================================================
 
-class ThemeNotifier extends Notifier<ThemeMode> {
+class ThemeNotifier extends StateNotifier<ThemeMode> {
   static const String prefKey = 'theme_mode';
 
-  @override
-  ThemeMode build() {
+  ThemeNotifier() : super(ThemeMode.system) {
     _loadTheme();
-    return ThemeMode.system;
   }
 
   Future<void> _loadTheme() async {
@@ -830,21 +828,20 @@ class ThemeNotifier extends Notifier<ThemeMode> {
   }
 }
 
-final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() {
+final themeProvider =
+    StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
   return ThemeNotifier();
 });
 
 // ============================================================
-// Locale Notifier — Notifier<Locale>
+// Locale Notifier — StateNotifier<Locale>
 // ============================================================
 
-class LocaleNotifier extends Notifier<Locale> {
+class LocaleNotifier extends StateNotifier<Locale> {
   static const String prefKey = 'locale';
 
-  @override
-  Locale build() {
+  LocaleNotifier() : super(const Locale('ar')) {
     _loadLocale();
-    return const Locale('ar');
   }
 
   Future<void> _loadLocale() async {
@@ -869,6 +866,7 @@ class LocaleNotifier extends Notifier<Locale> {
   }
 }
 
-final localeProvider = NotifierProvider<LocaleNotifier, Locale>(() {
+final localeProvider =
+    StateNotifierProvider<LocaleNotifier, Locale>((ref) {
   return LocaleNotifier();
 });
