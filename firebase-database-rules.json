@@ -1,0 +1,1057 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        "role": {
+          ".validate": "newData.isString() && (newData.val() == 'user' || newData.val() == 'admin' || newData.val() == 'network_manager')",
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+        },
+        "balance": {
+          ".validate": "newData.isNumber() && newData.val() >= 0",
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()",
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+        },
+        "managedNetwork": {
+          ".validate": "newData.isString()",
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "phone": {
+          ".validate": "newData.isString()"
+        },
+        "photoURL": {
+          ".validate": "newData.isString()"
+        },
+        "provinceId": {
+          ".validate": "newData.isString()"
+        },
+        "provinceName": {
+          ".validate": "newData.isString()"
+        },
+        "district": {
+          ".validate": "newData.isString()"
+        },
+        "fcmToken": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".read": "auth != null",
+      ".indexOn": ["role", "managedNetwork", "provinceId"]
+    },
+
+    "credit": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        "amount": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "updatedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "history": {
+          "$histId": {
+            ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+            ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+            ".validate": "newData.hasChildren(['type', 'amount', 'description', 'date'])",
+            "type": {
+              ".validate": "newData.isString() && (newData.val() == 'deposit' || newData.val() == 'purchase' || newData.val() == 'gift' || newData.val() == 'redeem' || newData.val() == 'commission' || newData.val() == 'refund')"
+            },
+            "amount": {
+              ".validate": "newData.isNumber()"
+            },
+            "description": {
+              ".validate": "newData.isString()"
+            },
+            "date": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            },
+            "orderId": {
+              ".validate": "newData.isString()"
+            },
+            "depositRequestId": {
+              ".validate": "newData.isString()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    },
+
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        "$notifId": {
+          ".validate": "newData.hasChildren(['type', 'title', 'message', 'isRead', 'createdAt'])",
+          "type": {
+            ".validate": "newData.isString()"
+          },
+          "title": {
+            ".validate": "newData.isString()"
+          },
+          "message": {
+            ".validate": "newData.isString()"
+          },
+          "isRead": {
+            ".validate": "newData.isBoolean()"
+          },
+          "createdAt": {
+            ".validate": "newData.isNumber() && newData.val() > 0"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+
+    "networks": {
+      ".read": true,
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || root.child('users').child(auth.uid).child('role').val() == 'network_manager')",
+      "$netId": {
+        ".read": true,
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || (root.child('users').child(auth.uid).child('role').val() == 'network_manager' && root.child('users').child(auth.uid).child('managedNetwork').val() == $netId))",
+        ".validate": "newData.hasChildren(['name', 'color', 'bgColor', 'emoji', 'createdAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "color": {
+          ".validate": "newData.isString()"
+        },
+        "bgColor": {
+          ".validate": "newData.isString()"
+        },
+        "emoji": {
+          ".validate": "newData.isString()"
+        },
+        "ownerId": {
+          ".validate": "newData.isString()"
+        },
+        "ownerName": {
+          ".validate": "newData.isString()"
+        },
+        "ownerPhone": {
+          ".validate": "newData.isString()"
+        },
+        "location": {
+          ".validate": "newData.isString()"
+        },
+        "provinceId": {
+          ".validate": "newData.isString()"
+        },
+        "provinceName": {
+          ".validate": "newData.isString()"
+        },
+        "district": {
+          ".validate": "newData.isString()"
+        },
+        "exactLocation": {
+          ".validate": "newData.isString()"
+        },
+        "connectionIP": {
+          ".validate": "newData.isString()"
+        },
+        "imageBase64": {
+          ".validate": "newData.isString()"
+        },
+        "networkType": {
+          ".validate": "newData.isString()"
+        },
+        "coverage": {
+          ".validate": "newData.isString()"
+        },
+        "speed": {
+          ".validate": "newData.isString()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["provinceId", "district", "ownerId", "isActive"]
+    },
+
+    "tiers": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$tierKey": {
+        ".validate": "newData.hasChildren(['tier', 'price', 'data', 'duration', 'createdAt'])",
+        "tier": {
+          ".validate": "newData.isString()"
+        },
+        "price": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "data": {
+          ".validate": "newData.isString()"
+        },
+        "duration": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "icon": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "networkTiers": {
+      ".read": true,
+      "$netId": {
+        ".read": true,
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || (root.child('users').child(auth.uid).child('role').val() == 'network_manager' && root.child('users').child(auth.uid).child('managedNetwork').val() == $netId))",
+        "$tierId": {
+          ".validate": "newData.hasChildren(['tier', 'price', 'data', 'duration', 'networkId', 'createdAt'])",
+          "tier": {
+            ".validate": "newData.isString()"
+          },
+          "price": {
+            ".validate": "newData.isNumber() && newData.val() > 0"
+          },
+          "data": {
+            ".validate": "newData.isString()"
+          },
+          "duration": {
+            ".validate": "newData.isNumber() && newData.val() > 0"
+          },
+          "icon": {
+            ".validate": "newData.isString()"
+          },
+          "networkId": {
+            ".validate": "newData.isString() && newData.val() == $netId"
+          },
+          "createdAt": {
+            ".validate": "newData.isNumber() && newData.val() > 0"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+
+    "cards": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || root.child('users').child(auth.uid).child('role').val() == 'network_manager')",
+      "$cardId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || (root.child('users').child(auth.uid).child('role').val() == 'network_manager' && root.child('users').child(auth.uid).child('managedNetwork').val() == newData.child('network').val()))",
+        ".validate": "newData.hasChildren(['code', 'price', 'data', 'duration', 'isUsed', 'tier', 'network', 'createdAt'])",
+        "code": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "price": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "data": {
+          ".validate": "newData.isString()"
+        },
+        "duration": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "isUsed": {
+          ".validate": "newData.isBoolean()"
+        },
+        "usedBy": {
+          ".validate": "newData.isString()"
+        },
+        "usedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "tier": {
+          ".validate": "newData.isString()"
+        },
+        "network": {
+          ".validate": "newData.isString()"
+        },
+        "networkName": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["network", "tier", "isUsed", "usedBy", "code"]
+    },
+
+    "orders": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null",
+      "$orderId": {
+        ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || data.child('userId').val() == auth.uid)",
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || newData.child('userId').val() == auth.uid)",
+        ".validate": "newData.hasChildren(['userId', 'cardId', 'price', 'status', 'createdAt'])",
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "cardId": {
+          ".validate": "newData.isString()"
+        },
+        "cardCode": {
+          ".validate": "newData.isString()"
+        },
+        "price": {
+          ".validate": "newData.isNumber()"
+        },
+        "network": {
+          ".validate": "newData.isString()"
+        },
+        "networkName": {
+          ".validate": "newData.isString()"
+        },
+        "paymentMethod": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() == 'pending' || newData.val() == 'completed' || newData.val() == 'cancelled' || newData.val() == 'refunded')"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["userId", "status", "createdAt"]
+    },
+
+    "depositRequests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$depId": {
+        ".read": "auth != null && (data.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (newData.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".validate": "newData.hasChildren(['userId', 'amount', 'status', 'createdAt'])",
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "userName": {
+          ".validate": "newData.isString()"
+        },
+        "userEmail": {
+          ".validate": "newData.isString()"
+        },
+        "userPhone": {
+          ".validate": "newData.isString()"
+        },
+        "bankId": {
+          ".validate": "newData.isString()"
+        },
+        "bankName": {
+          ".validate": "newData.isString()"
+        },
+        "amount": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "referenceNumber": {
+          ".validate": "newData.isString()"
+        },
+        "receiptImageBase64": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() == 'pending' || newData.val() == 'approved' || newData.val() == 'rejected')",
+          ".write": "auth != null && (data.val() == 'pending' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+        },
+        "reviewedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "reviewedBy": {
+          ".validate": "newData.isString()"
+        },
+        "rejectionReason": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["userId", "status", "createdAt"]
+    },
+
+    "bankDetails": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$bankId": {
+        ".validate": "newData.hasChildren(['bankName', 'accountName', 'accountNumber', 'isActive'])",
+        "bankName": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "accountName": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "accountNumber": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isActive"]
+    },
+
+    "advertisements": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$adId": {
+        ".validate": "newData.hasChildren(['title', 'description', 'isActive'])",
+        "title": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "imageUrl": {
+          ".validate": "newData.isString()"
+        },
+        "linkUrl": {
+          ".validate": "newData.isString()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "order": {
+          ".validate": "newData.isNumber()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isActive"]
+    },
+
+    "homeBanners": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$bannerId": {
+        ".validate": "newData.hasChildren(['title', 'isActive', 'order'])",
+        "title": {
+          ".validate": "newData.isString()"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "imageUrl": {
+          ".validate": "newData.isString()"
+        },
+        "linkUrl": {
+          ".validate": "newData.isString()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "order": {
+          ".validate": "newData.isNumber()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isActive", "order"]
+    },
+
+    "starlinkProducts": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$prodId": {
+        ".validate": "newData.hasChildren(['name', 'priceUSD', 'isActive', 'createdAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "priceUSD": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "quantity": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "imageBase64": {
+          ".validate": "newData.isString()"
+        },
+        "imageUrl": {
+          ".validate": "newData.isString()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isActive"]
+    },
+
+    "starlinkOrders": {
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || data.child('userId').val() == auth.uid)",
+      ".write": "auth != null",
+      "$orderId": {
+        ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || data.child('userId').val() == auth.uid)",
+        ".write": "auth != null && (newData.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".validate": "newData.hasChildren(['userId', 'productId', 'priceUSD', 'status', 'createdAt'])",
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "userName": {
+          ".validate": "newData.isString()"
+        },
+        "userEmail": {
+          ".validate": "newData.isString()"
+        },
+        "userPhone": {
+          ".validate": "newData.isString()"
+        },
+        "productId": {
+          ".validate": "newData.isString()"
+        },
+        "productName": {
+          ".validate": "newData.isString()"
+        },
+        "priceUSD": {
+          ".validate": "newData.isNumber()"
+        },
+        "quantity": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() == 'pending' || newData.val() == 'confirmed' || newData.val() == 'shipped' || newData.val() == 'delivered' || newData.val() == 'cancelled')"
+        },
+        "address": {
+          ".validate": "newData.isString()"
+        },
+        "notes": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["userId", "status", "createdAt"]
+    },
+
+    "subscriptionPlans": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$planId": {
+        ".validate": "newData.hasChildren(['name', 'price', 'durationDays', 'isActive', 'createdAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "price": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "durationDays": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "features": {
+          ".validate": "newData.isObject()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isActive"]
+    },
+
+    "userSubscriptions": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$subId": {
+        ".read": "auth != null && (data.child('uid').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".validate": "newData.hasChildren(['planId', 'planName', 'activatedAt', 'expiresAt', 'isActive', 'uid'])",
+        "planId": {
+          ".validate": "newData.isString()"
+        },
+        "planName": {
+          ".validate": "newData.isString()"
+        },
+        "activatedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "expiresAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "autoRenew": {
+          ".validate": "newData.isBoolean()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["uid", "isActive"]
+    },
+
+    "cardSaleLocations": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$locId": {
+        ".validate": "newData.hasChildren(['name', 'isActive'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "address": {
+          ".validate": "newData.isString()"
+        },
+        "provinceId": {
+          ".validate": "newData.isString()"
+        },
+        "provinceName": {
+          ".validate": "newData.isString()"
+        },
+        "district": {
+          ".validate": "newData.isString()"
+        },
+        "latitude": {
+          ".validate": "newData.isNumber()"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber()"
+        },
+        "phone": {
+          ".validate": "newData.isString()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isActive", "provinceId"]
+    },
+
+    "networkSubmissions": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$subId": {
+        ".read": "auth != null && (data.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (newData.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".validate": "newData.hasChildren(['userId', 'networkName', 'status', 'createdAt'])",
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "userName": {
+          ".validate": "newData.isString()"
+        },
+        "userEmail": {
+          ".validate": "newData.isString()"
+        },
+        "userPhone": {
+          ".validate": "newData.isString()"
+        },
+        "networkName": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "provinceId": {
+          ".validate": "newData.isString()"
+        },
+        "provinceName": {
+          ".validate": "newData.isString()"
+        },
+        "district": {
+          ".validate": "newData.isString()"
+        },
+        "exactLocation": {
+          ".validate": "newData.isString()"
+        },
+        "networkType": {
+          ".validate": "newData.isString()"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "coverage": {
+          ".validate": "newData.isString()"
+        },
+        "speed": {
+          ".validate": "newData.isString()"
+        },
+        "imageBase64": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() == 'pending' || newData.val() == 'approved' || newData.val() == 'rejected')",
+          ".write": "auth != null && (data.val() == 'pending' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+        },
+        "reviewedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "reviewedBy": {
+          ".validate": "newData.isString()"
+        },
+        "rejectionReason": {
+          ".validate": "newData.isString()"
+        },
+        "assignedNetworkId": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["userId", "status", "createdAt"]
+    },
+
+    "simCards": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$simId": {
+        ".validate": "newData.hasChildren(['name', 'price', 'isAvailable'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "price": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "imageUrl": {
+          ".validate": "newData.isString()"
+        },
+        "isAvailable": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["isAvailable"]
+    },
+
+    "redeemCodes": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$codeId": {
+        ".validate": "newData.hasChildren(['code', 'amount', 'isUsed', 'createdAt'])",
+        "code": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "amount": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "isUsed": {
+          ".validate": "newData.isBoolean()"
+        },
+        "usedBy": {
+          ".validate": "newData.isString()"
+        },
+        "usedByName": {
+          ".validate": "newData.isString()"
+        },
+        "usedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["code", "isUsed"]
+    },
+
+    "sharedRedeemCodes": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$codeId": {
+        ".validate": "newData.hasChildren(['code', 'amount', 'maxRedemptions', 'isActive', 'createdAt'])",
+        "code": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "amount": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "maxRedemptions": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "currentRedemptions": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "isActive": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["code", "isActive"]
+    },
+
+    "bulkNotifications": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$notifId": {
+        ".validate": "newData.hasChildren(['title', 'message', 'type', 'sentAt'])",
+        "title": {
+          ".validate": "newData.isString()"
+        },
+        "message": {
+          ".validate": "newData.isString()"
+        },
+        "type": {
+          ".validate": "newData.isString()"
+        },
+        "targetCount": {
+          ".validate": "newData.isNumber()"
+        },
+        "sentAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "commissionSettings": {
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || root.child('users').child(auth.uid).child('role').val() == 'network_manager')",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$settingId": {
+        ".validate": "newData.hasChildren(['managerUid', 'networkId', 'defaultRate', 'updatedAt'])",
+        "managerUid": {
+          ".validate": "newData.isString()"
+        },
+        "managerName": {
+          ".validate": "newData.isString()"
+        },
+        "networkId": {
+          ".validate": "newData.isString()"
+        },
+        "networkName": {
+          ".validate": "newData.isString()"
+        },
+        "defaultRate": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+        },
+        "updatedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "commissionEntries": {
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || root.child('users').child(auth.uid).child('role').val() == 'network_manager')",
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'admin' || root.child('users').child(auth.uid).child('role').val() == 'network_manager')",
+      "$entryId": {
+        ".validate": "newData.hasChildren(['managerUid', 'networkId', 'cardPrice', 'commissionAmount', 'soldAt'])",
+        "managerUid": {
+          ".validate": "newData.isString()"
+        },
+        "managerName": {
+          ".validate": "newData.isString()"
+        },
+        "networkId": {
+          ".validate": "newData.isString()"
+        },
+        "networkName": {
+          ".validate": "newData.isString()"
+        },
+        "cardId": {
+          ".validate": "newData.isString()"
+        },
+        "cardTier": {
+          ".validate": "newData.isString()"
+        },
+        "cardPrice": {
+          ".validate": "newData.isNumber()"
+        },
+        "commissionRate": {
+          ".validate": "newData.isNumber()"
+        },
+        "commissionAmount": {
+          ".validate": "newData.isNumber()"
+        },
+        "soldAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "isPaid": {
+          ".validate": "newData.isBoolean()"
+        },
+        "month": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      ".indexOn": ["managerUid", "networkId", "isPaid", "month"]
+    },
+
+    "monthlyPayouts": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$payoutId": {
+        ".validate": "newData.hasChildren(['month', 'managerUid', 'networkId', 'totalCommission', 'status', 'createdAt'])",
+        "month": {
+          ".validate": "newData.isString()"
+        },
+        "managerUid": {
+          ".validate": "newData.isString()"
+        },
+        "managerName": {
+          ".validate": "newData.isString()"
+        },
+        "networkId": {
+          ".validate": "newData.isString()"
+        },
+        "networkName": {
+          ".validate": "newData.isString()"
+        },
+        "totalCommission": {
+          ".validate": "newData.isNumber()"
+        },
+        "totalCards": {
+          ".validate": "newData.isNumber()"
+        },
+        "status": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "userSettings": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+
+    "security": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid",
+        "purchaseAttempts": {
+          "$attemptId": {
+            ".validate": "newData.isNumber() && newData.val() > 0"
+          }
+        }
+      }
+    },
+
+    "appContent": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+    },
+
+    "settings": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      "adminWhatsApp": {
+        ".validate": "newData.isString()"
+      },
+      "maxBalance": {
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      },
+      "maintenanceMode": {
+        ".validate": "newData.isBoolean()"
+      },
+      "appDownloadUrl": {
+        ".validate": "newData.isString()"
+      },
+      "latestAppVersion": {
+        ".validate": "newData.isString()"
+      },
+      "updateMessage": {
+        ".validate": "newData.isString()"
+      },
+      "hiddenSections": {
+        ".validate": "newData.isObject()"
+      },
+      "$other": {
+        ".validate": false
+      }
+    }
+  }
+}
