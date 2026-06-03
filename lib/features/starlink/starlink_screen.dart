@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
+
 import 'package:firebase_database/firebase_database.dart';
 import '../../app/theme.dart';
 import '../../core/constants/app_constants.dart';

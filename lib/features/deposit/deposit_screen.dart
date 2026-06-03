@@ -30,7 +30,6 @@ class _DepositScreenState extends ConsumerState<DepositScreen> {
   String? _selectedBankId;
   String? _selectedBankName;
   String? _receiptBase64;
-  bool _isLoading = false;
   bool _isSubmitting = false;
 
   @override

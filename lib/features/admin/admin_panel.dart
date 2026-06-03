@@ -35,6 +35,7 @@ class _AdminPanelState extends ConsumerState<AdminPanel>
   int _currentIndex = 0;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  late AppLocalizations loc;
 
   final List<_AdminTab> _tabs = const [
     _AdminTab(icon: Icons.dashboard_rounded, labelKey: 'overview'),
@@ -78,7 +79,7 @@ class _AdminPanelState extends ConsumerState<AdminPanel>
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
+    loc = AppLocalizations.of(context);
     final userAsync = ref.watch(currentUserProvider);
 
     return userAsync.when(
@@ -156,7 +157,7 @@ class _AdminPanelState extends ConsumerState<AdminPanel>
 
   // ─── Wide Layout (Tablet/Desktop) ───
   Widget _buildWideLayout() {
-    final loc = AppLocalizations.of(context);
+    loc = AppLocalizations.of(context);
     return Row(
       children: [
         NavigationRail(
@@ -243,7 +244,6 @@ class _DashboardTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context);
-    final usersAsync = ref.watch(currentUserProvider);
     final networksAsync = ref.watch(networksProvider);
     final cardsAsync = ref.watch(cardsProvider);
     final depositsAsync = ref.watch(depositsProvider);
@@ -737,7 +737,7 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
   Stream<List<AppUser>> _usersStream() {
     final controller = StreamController<List<AppUser>>();
     final ref = FirebaseDatabase.instance.ref(AppConstants.fbUsers);
-    final sub = ref.onValue.listen((event) {
+    ref.onValue.listen((event) {
       final data = event.snapshot.value;
       if (data == null) {
         controller.add([]);
@@ -828,7 +828,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   StatusBadge(
-                    text: user.isActive ? loc.translate('active') : loc.translate('disabled'),
+                    text: user.isActive ? AppLocalizations.of(context).translate('active') : AppLocalizations.of(context).translate('disabled'),
                     color: user.isActive ? AppTheme.accentGreen : AppTheme.accentRed,
                   ),
                   const SizedBox(height: 4),
@@ -852,13 +852,13 @@ class _UserCardState extends ConsumerState<_UserCard> {
           // ── Expanded Details ──
           if (_isExpanded) ...[
             const Divider(height: 24),
-            InfoRow(icon: Icons.badge_rounded, label: loc.translate('role'), value: _roleLabel(user.role), iconColor: roleColor),
+            InfoRow(icon: Icons.badge_rounded, label: AppLocalizations.of(context).translate('role'), value: _roleLabel(user.role), iconColor: roleColor),
             if (user.phone.isNotEmpty)
-              InfoRow(icon: Icons.phone_rounded, label: loc.translate('phone'), value: user.phone),
+              InfoRow(icon: Icons.phone_rounded, label: AppLocalizations.of(context).translate('phone'), value: user.phone),
             if (user.managedNetwork != null)
-              InfoRow(icon: Icons.wifi_rounded, label: loc.translate('managedNetwork'), value: user.managedNetwork!),
+              InfoRow(icon: Icons.wifi_rounded, label: AppLocalizations.of(context).translate('managedNetwork'), value: user.managedNetwork!),
             if (user.createdAt != null)
-              InfoRow(icon: Icons.calendar_today_rounded, label: loc.translate('registered'), value: _formatDate(user.createdAt!)),
+              InfoRow(icon: Icons.calendar_today_rounded, label: AppLocalizations.of(context).translate('registered'), value: _formatDate(user.createdAt!)),
             const SizedBox(height: 12),
 
             // ── Action Buttons ──
@@ -867,21 +867,21 @@ class _UserCardState extends ConsumerState<_UserCard> {
               runSpacing: 8,
               children: [
                 AppButton(
-                  text: loc.translate('editRole'),
+                  text: AppLocalizations.of(context).translate('editRole'),
                   icon: Icons.edit_rounded,
                   onPressed: () => _editUserRole(user),
                   isSmall: true,
                   isOutlined: true,
                 ),
                 AppButton(
-                  text: loc.translate('adjustBalance'),
+                  text: AppLocalizations.of(context).translate('adjustBalance'),
                   icon: Icons.account_balance_wallet_rounded,
                   onPressed: () => _adjustBalance(user),
                   isSmall: true,
                   isOutlined: true,
                 ),
                 AppButton(
-                  text: user.isActive ? loc.translate('disable') : loc.translate('enable'),
+                  text: user.isActive ? AppLocalizations.of(context).translate('disable') : AppLocalizations.of(context).translate('enable'),
                   icon: user.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
                   onPressed: () => _toggleUserActive(user),
                   isSmall: true,
@@ -889,7 +889,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
                   backgroundColor: user.isActive ? AppTheme.accentRed : AppTheme.accentGreen,
                 ),
                 AppButton(
-                  text: loc.translate('delete'),
+                  text: AppLocalizations.of(context).translate('delete'),
                   icon: Icons.delete_rounded,
                   onPressed: () => _deleteUser(user),
                   isSmall: true,
@@ -906,9 +906,9 @@ class _UserCardState extends ConsumerState<_UserCard> {
 
   String _roleLabel(String role) {
     switch (role) {
-      case 'admin': return loc.translate('admin');
-      case 'network_manager': return loc.translate('manager');
-      default: return loc.translate('users');
+      case 'admin': return AppLocalizations.of(context).translate('admin');
+      case 'network_manager': return AppLocalizations.of(context).translate('manager');
+      default: return AppLocalizations.of(context).translate('users');
     }
   }
 
@@ -930,14 +930,14 @@ class _UserCardState extends ConsumerState<_UserCard> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           ),
-          title: Text(loc.translate('editRole')),
+          title: Text(AppLocalizations.of(context).translate('editRole')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('${user.displayName} (${user.email})', style: AppTheme.bodySmall),
               const SizedBox(height: 16),
-              Text(loc.translate('selectRole'), style: AppTheme.labelMedium),
+              Text(AppLocalizations.of(context).translate('selectRole'), style: AppTheme.labelMedium),
               const SizedBox(height: 8),
               ...roles.map((role) => RadioListTile<String>(
                 value: role,
@@ -949,7 +949,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
               )),
               if (selectedRole == 'network_manager') ...[
                 const SizedBox(height: 12),
-                Text(loc.translate('assignNetwork'), style: AppTheme.labelMedium),
+                Text(AppLocalizations.of(context).translate('assignNetwork'), style: AppTheme.labelMedium),
                 const SizedBox(height: 8),
                 DropdownButton<String>(
                   value: selectedNetwork ?? (networks.isNotEmpty ? networks.first.id : null),
@@ -966,14 +966,14 @@ class _UserCardState extends ConsumerState<_UserCard> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: Text(loc.translate('cancel')),
+              child: Text(AppLocalizations.of(context).translate('cancel')),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, {
                 'role': selectedRole ?? 'user',
                 'network': selectedNetwork ?? '',
               }),
-              child: Text(loc.translate('save')),
+              child: Text(AppLocalizations.of(context).translate('save')),
             ),
           ],
         ),
@@ -997,7 +997,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.translate('roleUpdated')), backgroundColor: AppTheme.accentGreen),
+        SnackBar(content: Text(AppLocalizations.of(context).translate('roleUpdated')), backgroundColor: AppTheme.accentGreen),
       );
     }
   }
@@ -1013,7 +1013,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           ),
-          title: Text(loc.translate('adjustBalance')),
+          title: Text(AppLocalizations.of(context).translate('adjustBalance')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1025,7 +1025,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
                     child: RadioListTile<String>(
                       value: 'add',
                       groupValue: operation,
-                      title: Text(loc.translate('add')),
+                      title: Text(AppLocalizations.of(context).translate('add')),
                       onChanged: (v) => setDialogState(() => operation = v!),
                       contentPadding: EdgeInsets.zero,
                       dense: true,
@@ -1035,7 +1035,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
                     child: RadioListTile<String>(
                       value: 'subtract',
                       groupValue: operation,
-                      title: Text(loc.translate('subtract')),
+                      title: Text(AppLocalizations.of(context).translate('subtract')),
                       onChanged: (v) => setDialogState(() => operation = v!),
                       contentPadding: EdgeInsets.zero,
                       dense: true,
@@ -1046,7 +1046,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
               const SizedBox(height: 12),
               AppTextField(
                 controller: amountCtrl,
-                label: loc.translate('amount'),
+                label: AppLocalizations.of(context).translate('amount'),
                 keyboardType: TextInputType.number,
                 prefixIcon: Icons.payments_rounded,
               ),
@@ -1055,14 +1055,14 @@ class _UserCardState extends ConsumerState<_UserCard> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: Text(loc.translate('cancel')),
+              child: Text(AppLocalizations.of(context).translate('cancel')),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, {
                 'operation': operation,
                 'amount': double.tryParse(amountCtrl.text) ?? 0,
               }),
-              child: Text(loc.translate('confirm')),
+              child: Text(AppLocalizations.of(context).translate('confirm')),
             ),
           ],
         ),
@@ -1091,7 +1091,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.translate('balanceUpdated')), backgroundColor: AppTheme.accentGreen),
+        SnackBar(content: Text(AppLocalizations.of(context).translate('balanceUpdated')), backgroundColor: AppTheme.accentGreen),
       );
     }
   }
@@ -1109,16 +1109,16 @@ class _UserCardState extends ConsumerState<_UserCard> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
-        title: Text(loc.translate('confirmDelete')),
+        title: Text(AppLocalizations.of(context).translate('confirmDelete')),
         content: Text('${user.displayName} (${user.email})'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(loc.translate('cancel')),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(loc.translate('delete'),
+            child: Text(AppLocalizations.of(context).translate('delete'),
                 style: const TextStyle(color: AppTheme.accentRed)),
           ),
         ],
@@ -1673,7 +1673,6 @@ class _AdminCardsTabState extends ConsumerState<_AdminCardsTab> {
     final loc = AppLocalizations.of(context);
     final cardsAsync = ref.watch(cardsProvider);
     final networksAsync = ref.watch(networksProvider);
-    final tiersAsync = ref.watch(tiersProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -3035,7 +3034,7 @@ class _AdminSettingsTabState extends ConsumerState<_AdminSettingsTab> {
                     iconColor: AppTheme.primaryColor,
                     title: loc.translate('minDeposit'),
                     description: loc.translate('minDepositDesc'),
-                    currentValue: '${settings.minDeposit.toInt()} ر.ي',
+                    currentValue: '${(settings.minDeposit ?? 0).toInt()} ر.ي',
                     firebasePath: '${AppConstants.fbSettings}/minDeposit',
                     isNumber: true,
                   ),
@@ -3048,7 +3047,7 @@ class _AdminSettingsTabState extends ConsumerState<_AdminSettingsTab> {
                     iconColor: AppTheme.tier500,
                     title: loc.translate('maxBalance'),
                     description: loc.translate('maxBalanceDesc'),
-                    currentValue: '${settings.maxBalance.toInt()} ر.ي',
+                    currentValue: '${(settings.maxBalance ?? 0).toInt()} ر.ي',
                     firebasePath: '${AppConstants.fbSettings}/maxBalance',
                     isNumber: true,
                   ),
@@ -3061,7 +3060,7 @@ class _AdminSettingsTabState extends ConsumerState<_AdminSettingsTab> {
                     iconColor: AppTheme.tier300,
                     title: loc.translate('appVersion'),
                     description: loc.translate('appVersionDesc'),
-                    currentValue: settings.latestVersion,
+                    currentValue: settings.latestVersion ?? '',
                     firebasePath: '${AppConstants.fbSettings}/latestVersion',
                     isNumber: false,
                   ),

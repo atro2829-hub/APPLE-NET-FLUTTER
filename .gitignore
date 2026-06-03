@@ -46,3 +46,49 @@ app.*.map.json
 build/
 .dart_tool/
 *.iml
+
+# Gradle cache
+.gradle/
+**/.gradle/
+android/.gradle/
+android/app/.gradle/
+
+# Android build
+android/app/build/
+android/build/
+
+# Keystore (sensitive - never push)
+*.jks
+*.keystore
+key.properties
+
+# google-services.json (sensitive - contains API keys)
+google-services.json
+
+# Flutter build
+build/
+
+# iOS build
+ios/Pods/
+ios/.symlinks/
+
+# macOS
+.DS_Store
+
+# Windows build
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+
+# Linux build  
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+
+# Web
+web/favicon.png
+
+# Local configuration
+local.properties
+
+# Generated files
+*.g.dart
+*.freezed.dart

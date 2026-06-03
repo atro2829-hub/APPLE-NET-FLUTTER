@@ -1887,7 +1887,14 @@ class SimCard {
   final String? description;
   final String? imageUrl;
   final String? imageBase64;
-  final bool isAvailable;
+  final bool isActive;
+  final String? phoneNumber;
+  String get simId => id;
+  final String provider;
+  final String? networkId;
+
+  // Backward-compatible alias
+  bool get isAvailable => isActive;
 
   const SimCard({
     required this.id,
@@ -1896,7 +1903,10 @@ class SimCard {
     this.description,
     this.imageUrl,
     this.imageBase64,
-    this.isAvailable = true,
+    this.isActive = true,
+    this.phoneNumber,
+    this.provider = '',
+    this.networkId,
   });
 
   factory SimCard.fromMap(Map<String, dynamic> map) {
@@ -1907,7 +1917,10 @@ class SimCard {
       description: map['description'] as String?,
       imageUrl: map['imageUrl'] as String?,
       imageBase64: map['imageBase64'] as String?,
-      isAvailable: map['isAvailable'] as bool? ?? true,
+      isActive: map['isActive'] as bool? ?? map['isAvailable'] as bool? ?? true,
+      phoneNumber: map['phoneNumber'] as String?,
+      provider: map['provider'] as String? ?? '',
+      networkId: map['networkId'] as String?,
     );
   }
 
@@ -1916,11 +1929,14 @@ class SimCard {
       'id': id,
       'name': name,
       'price': price,
-      'isAvailable': isAvailable,
+      'isActive': isActive,
+      'provider': provider,
     };
     if (description != null) m['description'] = description;
     if (imageUrl != null) m['imageUrl'] = imageUrl;
     if (imageBase64 != null) m['imageBase64'] = imageBase64;
+    if (phoneNumber != null) m['phoneNumber'] = phoneNumber;
+    if (networkId != null) m['networkId'] = networkId;
     return m;
   }
 
@@ -1931,7 +1947,10 @@ class SimCard {
     String? description,
     String? imageUrl,
     String? imageBase64,
-    bool? isAvailable,
+    bool? isActive,
+    String? phoneNumber,
+    String? provider,
+    String? networkId,
   }) {
     return SimCard(
       id: id ?? this.id,
@@ -1940,7 +1959,10 @@ class SimCard {
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
       imageBase64: imageBase64 ?? this.imageBase64,
-      isAvailable: isAvailable ?? this.isAvailable,
+      isActive: isActive ?? this.isActive,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      provider: provider ?? this.provider,
+      networkId: networkId ?? this.networkId,
     );
   }
 }
@@ -2026,6 +2048,11 @@ class AppSettings {
   final String? adminWhatsApp;
   final double? maxBalance;
   final bool maintenanceMode;
+  final bool forceUpdate;
+  final bool registrationOpen;
+  final bool depositEnabled;
+  final double? minDeposit;
+  final String? latestVersion; // alias for latestAppVersion (admin panel UI)
   final String? appDownloadUrl;
   final String? latestAppVersion;
   final String? updateMessage;
@@ -2035,6 +2062,11 @@ class AppSettings {
     this.adminWhatsApp,
     this.maxBalance,
     this.maintenanceMode = false,
+    this.forceUpdate = false,
+    this.registrationOpen = true,
+    this.depositEnabled = true,
+    this.minDeposit,
+    this.latestVersion,
     this.appDownloadUrl,
     this.latestAppVersion,
     this.updateMessage,
@@ -2046,6 +2078,11 @@ class AppSettings {
       adminWhatsApp: map['adminWhatsApp'] as String?,
       maxBalance: (map['maxBalance'] as num?)?.toDouble(),
       maintenanceMode: map['maintenanceMode'] as bool? ?? false,
+      forceUpdate: map['forceUpdate'] as bool? ?? false,
+      registrationOpen: map['registrationOpen'] as bool? ?? true,
+      depositEnabled: map['depositEnabled'] as bool? ?? true,
+      minDeposit: (map['minDeposit'] as num?)?.toDouble(),
+      latestVersion: map['latestVersion'] as String? ?? map['latestAppVersion'] as String?,
       appDownloadUrl: map['appDownloadUrl'] as String?,
       latestAppVersion: map['latestAppVersion'] as String?,
       updateMessage: map['updateMessage'] as String?,
@@ -2059,9 +2096,14 @@ class AppSettings {
   Map<String, dynamic> toMap() {
     final m = <String, dynamic>{
       'maintenanceMode': maintenanceMode,
+      'forceUpdate': forceUpdate,
+      'registrationOpen': registrationOpen,
+      'depositEnabled': depositEnabled,
     };
     if (adminWhatsApp != null) m['adminWhatsApp'] = adminWhatsApp;
     if (maxBalance != null) m['maxBalance'] = maxBalance;
+    if (minDeposit != null) m['minDeposit'] = minDeposit;
+    if (latestVersion != null) m['latestVersion'] = latestVersion;
     if (appDownloadUrl != null) m['appDownloadUrl'] = appDownloadUrl;
     if (latestAppVersion != null) m['latestAppVersion'] = latestAppVersion;
     if (updateMessage != null) m['updateMessage'] = updateMessage;
@@ -2073,6 +2115,11 @@ class AppSettings {
     String? adminWhatsApp,
     double? maxBalance,
     bool? maintenanceMode,
+    bool? forceUpdate,
+    bool? registrationOpen,
+    bool? depositEnabled,
+    double? minDeposit,
+    String? latestVersion,
     String? appDownloadUrl,
     String? latestAppVersion,
     String? updateMessage,
@@ -2082,6 +2129,11 @@ class AppSettings {
       adminWhatsApp: adminWhatsApp ?? this.adminWhatsApp,
       maxBalance: maxBalance ?? this.maxBalance,
       maintenanceMode: maintenanceMode ?? this.maintenanceMode,
+      forceUpdate: forceUpdate ?? this.forceUpdate,
+      registrationOpen: registrationOpen ?? this.registrationOpen,
+      depositEnabled: depositEnabled ?? this.depositEnabled,
+      minDeposit: minDeposit ?? this.minDeposit,
+      latestVersion: latestVersion ?? this.latestVersion,
       appDownloadUrl: appDownloadUrl ?? this.appDownloadUrl,
       latestAppVersion: latestAppVersion ?? this.latestAppVersion,
       updateMessage: updateMessage ?? this.updateMessage,

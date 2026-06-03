@@ -19,7 +19,6 @@ class PurchasedScreen extends ConsumerStatefulWidget {
 }
 
 class _PurchasedScreenState extends ConsumerState<PurchasedScreen> {
-  String? _filterNetwork;
   String? _filterStatus; // 'used' or 'valid'
 
   @override
