@@ -93,7 +93,7 @@ class _DepositScreenState extends ConsumerState<DepositScreen> {
       if (uid == null) return;
 
       final userAsync = ref.read(currentUserProvider);
-      final user = userAsync.valueOrNull;
+      final user = userAsync.value;
 
       await FirebaseDatabase.instance.ref(AppConstants.fbDeposits).push().set({
         'userId': uid,

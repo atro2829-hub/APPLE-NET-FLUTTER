@@ -97,7 +97,7 @@ class _NetworkSubmissionScreenState
     setState(() => _isSubmitting = true);
     try {
       final uid = fb_auth.FirebaseAuth.instance.currentUser?.uid;
-      final user = ref.read(currentUserProvider).valueOrNull ?? AppUser(uid: uid ?? '', email: '', displayName: '', phone: '', role: 'user', managedNetwork: '', balance: 0, isActive: true);
+      final user = ref.read(currentUserProvider).value ?? AppUser(uid: uid ?? '', email: '', displayName: '', phone: '', role: 'user', managedNetwork: '', balance: 0, isActive: true);
       final provinceName = AppConstants.getProvinceName(_selectedProvinceId!);
 
       await FirebaseDatabase.instance

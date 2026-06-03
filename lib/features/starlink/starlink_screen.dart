@@ -123,7 +123,7 @@ class _StarlinkProductItem extends ConsumerWidget {
   }
 
   Future<void> _orderStarlink(BuildContext context, WidgetRef ref) async {
-    final user = ref.read(currentUserProvider).valueOrNull;
+    final user = ref.read(currentUserProvider).value;
     if (user == null) return;
 
     try {

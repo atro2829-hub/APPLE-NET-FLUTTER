@@ -48,7 +48,7 @@ final authStateProvider = StreamProvider<fb_auth.User?>((ref) {
 /// Returns the currently signed-in user's UID, or `null`.
 final currentUserIdProvider = Provider<String?>((ref) {
   final authState = ref.watch(authStateProvider);
-  return authState.valueOrNull?.uid;
+  return authState.value?.uid;
 });
 
 // ============================================================
@@ -265,7 +265,7 @@ final notificationsProvider = StreamProvider<List<AppNotification>>((ref) {
 /// Counts the number of unread notifications.
 final unreadCountProvider = Provider<int>((ref) {
   final notifications = ref.watch(notificationsProvider);
-  return notifications.valueOrNull?.where((n) => !n.isRead).length ?? 0;
+  return notifications.value?.where((n) => !n.isRead).length ?? 0;
 });
 
 // ============================================================
@@ -704,7 +704,7 @@ final appSettingsProvider = StreamProvider<AppSettings>((ref) {
 /// Returns `true` if the current user's role is 'admin'.
 final isAdminProvider = Provider<bool>((ref) {
   final user = ref.watch(currentUserProvider);
-  return user.valueOrNull?.role == AppConstants.roleAdmin;
+  return user.value?.role == AppConstants.roleAdmin;
 });
 
 // ============================================================
@@ -714,7 +714,7 @@ final isAdminProvider = Provider<bool>((ref) {
 /// Returns `true` if the current user's role is 'network_manager'.
 final isManagerProvider = Provider<bool>((ref) {
   final user = ref.watch(currentUserProvider);
-  return user.valueOrNull?.role == AppConstants.roleNetworkManager;
+  return user.value?.role == AppConstants.roleNetworkManager;
 });
 
 // ============================================================
@@ -776,14 +776,16 @@ final bulkNotificationsProvider =
 });
 
 // ============================================================
-// Theme Notifier — StateNotifier<ThemeMode>
+// Theme Notifier — Notifier<ThemeMode>
 // ============================================================
 
-class ThemeNotifier extends StateNotifier<ThemeMode> {
+class ThemeNotifier extends Notifier<ThemeMode> {
   static const String prefKey = 'theme_mode';
 
-  ThemeNotifier() : super(ThemeMode.system) {
+  @override
+  ThemeMode build() {
     _loadTheme();
+    return ThemeMode.system;
   }
 
   Future<void> _loadTheme() async {
@@ -828,20 +830,21 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   }
 }
 
-final themeProvider =
-    StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() {
   return ThemeNotifier();
 });
 
 // ============================================================
-// Locale Notifier — StateNotifier<Locale>
+// Locale Notifier — Notifier<Locale>
 // ============================================================
 
-class LocaleNotifier extends StateNotifier<Locale> {
+class LocaleNotifier extends Notifier<Locale> {
   static const String prefKey = 'locale';
 
-  LocaleNotifier() : super(const Locale('ar')) {
+  @override
+  Locale build() {
     _loadLocale();
+    return const Locale('ar');
   }
 
   Future<void> _loadLocale() async {
@@ -866,7 +869,6 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 }
 
-final localeProvider =
-    StateNotifierProvider<LocaleNotifier, Locale>((ref) {
+final localeProvider = NotifierProvider<LocaleNotifier, Locale>(() {
   return LocaleNotifier();
 });

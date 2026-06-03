@@ -180,7 +180,7 @@ class _HomeContent extends ConsumerWidget {
           title: Row(
             children: [
               Text(
-                '${loc.translate('welcome')}, ${userAsync.valueOrNull?.displayName ?? ''}',
+                '${loc.translate('welcome')}, ${userAsync.value?.displayName ?? ''}',
                 style: AppTheme.titleMedium,
               ),
             ],
@@ -210,7 +210,7 @@ class _HomeContent extends ConsumerWidget {
         // ── Balance Card ──
         SliverToBoxAdapter(
           child: BalanceCard(
-            balance: userAsync.valueOrNull?.balance ?? 0,
+            balance: userAsync.value?.balance ?? 0,
             maxBalance: AppConstants.defaultMaxBalance,
           ),
         ),
@@ -362,8 +362,8 @@ class _StatsRow extends ConsumerWidget {
     final loc = AppLocalizations.of(context);
     final networksAsync = ref.watch(networksProvider);
     final cardsAsync = ref.watch(cardsProvider);
-    final netCount = networksAsync.valueOrNull?.length ?? 0;
-    final cardCount = cardsAsync.valueOrNull?.length ?? 0;
+    final netCount = networksAsync.value?.length ?? 0;
+    final cardCount = cardsAsync.value?.length ?? 0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -445,8 +445,8 @@ class _CardsContent extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, i) => _NetworkDetailCard(
                   network: networks[i],
-                  tiers: tiersAsync.valueOrNull ?? [],
-                  cards: cardsAsync.valueOrNull ?? [],
+                  tiers: tiersAsync.value ?? [],
+                  cards: cardsAsync.value ?? [],
                   loc: loc,
                 ),
                 childCount: networks.length,
@@ -513,7 +513,7 @@ class _NetworkDetailCard extends ConsumerWidget {
 
   void _showBuyDialog(BuildContext context, WidgetRef ref, TierModel tier, NetworkModel network) {
     final userAsync = ref.read(currentUserProvider);
-    final user = userAsync.valueOrNull;
+    final user = userAsync.value;
     if (user == null) return;
 
     showDialog(
@@ -772,7 +772,7 @@ class _StarlinkProductCard extends ConsumerWidget {
   }
 
   Future<void> _orderStarlink(BuildContext context, WidgetRef ref) async {
-    final user = ref.read(currentUserProvider).valueOrNull;
+    final user = ref.read(currentUserProvider).value;
     if (user == null) return;
 
     try {
@@ -869,7 +869,7 @@ class _CreditContentState extends ConsumerState<_CreditContent> {
         SliverAppBar(floating: true, title: Text(loc.translate('myBalance'))),
         SliverToBoxAdapter(
           child: BalanceCard(
-            balance: userAsync.valueOrNull?.balance ?? 0,
+            balance: userAsync.value?.balance ?? 0,
             maxBalance: AppConstants.defaultMaxBalance,
           ),
         ),
@@ -1061,7 +1061,7 @@ class _MoreContent extends ConsumerWidget {
     final userAsync = ref.watch(currentUserProvider);
     final isAdmin = ref.watch(isAdminProvider);
     final isManager = ref.watch(isManagerProvider);
-    final user = userAsync.valueOrNull;
+    final user = userAsync.value;
 
     return CustomScrollView(
       slivers: [

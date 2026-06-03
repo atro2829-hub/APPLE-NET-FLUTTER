@@ -168,7 +168,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final userAsync = ref.watch(currentUserProvider);
-    final user = userAsync.valueOrNull;
+    final user = userAsync.value;
 
     if (user != null && !_isEditing && !_isChangingPassword) {
       _nameController.text = user.displayName;

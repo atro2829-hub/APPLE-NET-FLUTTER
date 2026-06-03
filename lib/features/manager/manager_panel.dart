@@ -499,7 +499,7 @@ class _CardsTabState extends ConsumerState<_CardsTab> {
     setState(() => _isAdding = true);
 
     try {
-      final networks = ref.read(networksProvider).valueOrNull ?? [];
+      final networks = ref.read(networksProvider).value ?? [];
       final network = networks.firstWhere((n) => n.id == widget.networkId);
       final db = FirebaseDatabase.instance;
       final ref_ = db.ref(AppConstants.fbCards).push();
@@ -546,13 +546,13 @@ class _CardsTabState extends ConsumerState<_CardsTab> {
       _bulkProgress = 0;
     });
 
-    final networks = ref.read(networksProvider).valueOrNull ?? [];
+    final networks = ref.read(networksProvider).value ?? [];
     final network = networks.firstWhere((n) => n.id == widget.networkId);
     final db = FirebaseDatabase.instance;
     final loc = AppLocalizations.of(context);
 
     // Get tier info for price/data/duration defaults
-    final allTiers = ref.read(tiersProvider).valueOrNull ?? [];
+    final allTiers = ref.read(tiersProvider).value ?? [];
     final networkTiers = allTiers.where((t) => t.networkId == widget.networkId || t.networkId == null).toList();
     final tierInfo = networkTiers.where((t) => t.tier == _bulkTierCtrl.text.trim()).firstOrNull;
 
@@ -1957,7 +1957,7 @@ class _SaleLocationsTabState extends ConsumerState<_SaleLocationsTab> {
     if (_nameCtrl.text.trim().isEmpty) return;
     setState(() => _isSaving = true);
     try {
-      final networks = ref.read(networksProvider).valueOrNull ?? [];
+      final networks = ref.read(networksProvider).value ?? [];
       final network = networks.firstWhere((n) => n.id == widget.networkId);
       final db = FirebaseDatabase.instance;
       final provinceName = _selectedProvinceId != null

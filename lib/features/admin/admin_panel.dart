@@ -921,7 +921,7 @@ class _UserCardState extends ConsumerState<_UserCard> {
     String? selectedRole = user.role;
     String? selectedNetwork;
 
-    final networks = ref.read(networksProvider).valueOrNull ?? [];
+    final networks = ref.read(networksProvider).value ?? [];
 
     final result = await showDialog<Map<String, String>>(
       context: context,
@@ -1619,9 +1619,9 @@ class _AdminCardsTabState extends ConsumerState<_AdminCardsTab> {
       _bulkProgress = 0;
     });
 
-    final networks = ref.read(networksProvider).valueOrNull ?? [];
+    final networks = ref.read(networksProvider).value ?? [];
     final network = networks.firstWhere((n) => n.id == _bulkNetworkId);
-    final allTiers = ref.read(tiersProvider).valueOrNull ?? [];
+    final allTiers = ref.read(tiersProvider).value ?? [];
     final tierInfo = allTiers.where((t) =>
         (t.networkId == _bulkNetworkId || t.networkId == null) &&
         t.tier == _bulkTier).firstOrNull;
@@ -1774,7 +1774,7 @@ class _AdminCardsTabState extends ConsumerState<_AdminCardsTab> {
                 onTap: () => setState(() => _filterNetwork = 'all'),
                 color: AppTheme.primaryColor,
               ),
-              ...networksAsync.valueOrNull?.map((n) => InfoChip(
+              ...networksAsync.value?.map((n) => InfoChip(
                     label: '${n.emoji} ${n.name}',
                     isSelected: _filterNetwork == n.id,
                     onTap: () => setState(() => _filterNetwork = n.id),

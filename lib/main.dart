@@ -204,8 +204,8 @@ class _AppleNetAppState extends ConsumerState<AppleNetApp> {
         );
 
         // Show maintenance mode overlay when enabled
-        if (appSettings.valueOrNull?.maintenanceMode == true) {
-          final currentUserRole = ref.watch(currentUserProvider).valueOrNull?.role;
+        if (appSettings.value?.maintenanceMode == true) {
+          final currentUserRole = ref.watch(currentUserProvider).value?.role;
           // Only block non-admin users
           if (currentUserRole != 'admin') {
             wrapped = _MaintenanceOverlay(child: wrapped);

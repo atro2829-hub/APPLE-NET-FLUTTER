@@ -85,11 +85,11 @@ CustomTransitionPage<void> _pageTransition({
 final routerProvider = Provider<GoRouter>((ref) {
   // Watch auth state to rebuild router on sign-in/sign-out
   final authState = ref.watch(authStateProvider);
-  final isLoggedIn = authState.valueOrNull != null;
+  final isLoggedIn = authState.value != null;
 
   // Watch current user for role-based access
   final currentUser = ref.watch(currentUserProvider);
-  final userRole = currentUser.valueOrNull?.role;
+  final userRole = currentUser.value?.role;
 
   return GoRouter(
     initialLocation: '/',
