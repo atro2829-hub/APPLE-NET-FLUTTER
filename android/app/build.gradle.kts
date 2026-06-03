@@ -15,8 +15,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.applenet.app"
-    compileSdk = 35
+    namespace = "com.apple.net"
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -28,9 +28,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.applenet.app"
+        applicationId = "com.apple.net"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "2.1.0"
         multiDexEnabled = true

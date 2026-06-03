@@ -1,4 +1,4 @@
-package com.applenet.apple_net
+package com.apple.net
 
 import io.flutter.embedding.android.FlutterActivity
 
