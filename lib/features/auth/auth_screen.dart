@@ -151,21 +151,22 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   String _mapAuthError(String code) {
+    final loc = AppLocalizations.of(context);
     switch (code) {
       case 'user-not-found':
-        return 'لم يتم العثور على مستخدم بهذا البريد';
+        return loc.translate('userNotFound');
       case 'wrong-password':
-        return 'كلمة المرور غير صحيحة';
+        return loc.translate('wrongPassword');
       case 'email-already-in-use':
-        return 'البريد الإلكتروني مستخدم بالفعل';
+        return loc.translate('emailAlreadyInUse');
       case 'weak-password':
-        return 'كلمة المرور ضعيفة';
+        return loc.translate('weakPassword');
       case 'invalid-email':
-        return 'بريد إلكتروني غير صالح';
+        return loc.translate('invalidEmail');
       case 'too-many-requests':
-        return 'طلبات كثيرة، حاول لاحقاً';
+        return loc.translate('tooManyRequests');
       default:
-        return 'حدث خطأ، حاول مرة أخرى';
+        return loc.translate('somethingWentWrong');
     }
   }
 
@@ -174,6 +175,89 @@ class _LoginScreenState extends State<LoginScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: AppTheme.accentRed),
     );
+  }
+
+  // ── Forgot Password Method ──
+  Future<void> _handleForgotPassword() async {
+    final emailCtrl = TextEditingController(text: _loginEmail.text.trim());
+    final loc = AppLocalizations.of(context);
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: const Icon(Icons.lock_reset_rounded, color: AppTheme.primaryColor, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Text(loc.translate('resetPassword')),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              loc.translate('resetPasswordDesc'),
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.adaptiveTextSecondary(context),
+              ),
+            ),
+            const SizedBox(height: 16),
+            AppTextField(
+              controller: emailCtrl,
+              label: loc.translate('email'),
+              prefixIcon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(loc.translate('cancel')),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(loc.translate('send')),
+          ),
+        ],
+      ),
+    );
+
+    if (result != true || !mounted) return;
+
+    final email = emailCtrl.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      _showError(loc.translate('invalidEmail'));
+      return;
+    }
+
+    try {
+      await fb_auth.FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loc.translate('resetPasswordSent')),
+            backgroundColor: AppTheme.accentGreen,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError(loc.translate('resetPasswordFailed'));
+      }
+    } finally {
+      emailCtrl.dispose();
+    }
   }
 
   @override
@@ -327,9 +411,7 @@ class _LoginScreenState extends State<LoginScreen>
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(
-                onPressed: () {
-                  // TODO: Implement forgot password
-                },
+                onPressed: _handleForgotPassword,
                 child: Text(
                   loc.translate('forgotPassword'),
                   style: AppTheme.bodySmall.copyWith(
